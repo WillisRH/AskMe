@@ -1,0 +1,49 @@
+<!--© 2022 Willis Rihatman, All rights reserved-->
+<!DOCTYPE html>
+<link rel="stylesheet" type="text/css" href="style.css"/>
+<meta name="viewport" content="width=device-width">
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+<title>Login to your account, master!</title>
+<link rel="icon" 
+     type="image/png" 
+     href="https://cdn.discordapp.com/attachments/785664503802232872/1055428572296257667/1671704165791.jpg">
+</link>
+<meta content="Login Page" property="og:title"/>
+<meta content="Login Panel." property="og:description"/>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<html>
+  <head>
+    <% if (typeof error !== 'undefined' && error) { %>
+        <div class="error"><%= error %></div>
+      <% } %>
+    <style>
+      #container {
+        text-align: center;
+        border: 1px solid black;
+        width: 50%;
+        margin: 200px auto 0;
+        padding: 20px;
+        border-radius: 50px;
+      }
+      input[type="text"], input[type="submit"], input[type="password"]{
+        border-radius: 10px;
+      }
+      .error {
+  text-align: center;
+}
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <h1>Login Panel!</h1>
+      <form action="/home/askme/admin/loginatt" method="post">
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" name="username"><br>
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password"><br><br>
+        <button type="submit">Login</button> <a href="/home/askme/admin/signup">Sign up</a>
+      </form> 
+    </div>
+  </body>
+</html>

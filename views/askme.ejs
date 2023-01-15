@@ -1,0 +1,44 @@
+<!--© 2022 Willis Rihatman, All rights reserved-->
+<!DOCTYPE html>
+<link rel="stylesheet" type="text/css" href="style.css"/>
+<meta name="viewport" content="width=device-width">
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+<title>Ask me your question!</title>
+<link rel="icon" 
+     type="image/png" 
+     href="https://cdn.discordapp.com/attachments/785664503802232872/1055428572296257667/1671704165791.jpg">
+</link>
+<meta content="Ask your question here." property="og:title"/>
+<meta content="A simple web for your question." property="og:description"/>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<html>
+  <head>
+    <title>Ask Me all of your question!</title>
+    <style>
+      #container {
+        text-align: center;
+        border: 1px solid black;
+        width: 50%;
+        margin: 250px auto 0;
+        padding: 20px;
+        border-radius: 50px;
+        font-family: 'Great Vibes', cursive;
+      }
+      input[type="text"], input[type="submit"]{
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <h1>Ask Me all of your question!</h1>
+      <form action="/submit" id="questionform" method="post">
+        <label for="question">Your Question:</label>
+        <input type="text" id="question" name="question" maxlength="100">
+        <input type="submit" value="Submit">
+      </form>
+    </div>
+  </body>
+</html>
+

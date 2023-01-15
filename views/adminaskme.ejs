@@ -1,0 +1,42 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<h1>Pertanyaan Temen.</h1>
+
+
+
+<% for (let i = 0; i < questions.length; i++) { %>
+    <p class="text">Question <%= i + 1 %>: <a href="/home/askme/admin/questions/<%= questions[i].id %>" style="text-decoration: none;">"<%= questions[i].question %>" (<%= questions[i].id %>)</a> <a href="/home/askme/admin/questions/<%= questions[i].id %>/delete" id="delete" class="delete">Delete</a> </p>
+    <hr class="line">
+  <% } %>
+
+<style>
+    .line {
+  border: 1px solid #ddd;
+}
+h1 {
+    text-align: center;
+    padding-bottom: 20px;
+
+}
+.text {
+  padding-left: 10px;
+  font-size: 20px;
+}
+* {
+    font-family: Arial, Helvetica, sans-serif;
+    /* font-size: 20px; */
+}
+
+.text .delete {
+  text-align: right;
+  margin-left: 10px;
+}
+
+@media (max-width: 768px) {
+    .text {
+      margin-top: 10px;
+      font-size: 20px;
+    }
+  }
+</style>
+
