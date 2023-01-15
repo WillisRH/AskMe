@@ -13,8 +13,8 @@ const mysql = require('mysql');
 const { setName } = require('./pagehandler');
 
 const connection = mysql.createConnection({
-  host: 'localhost',
-  port: 3306,
+  host: '0.tcp.ap.ngrok.io',
+  port: 15200,
   user: 'root',
   password: '',
   database: 'userdata',
