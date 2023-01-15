@@ -232,48 +232,48 @@ app.get('/home/askme/admin/questions/:id', (req, res) => {
 // Discord Integrated!!!!!
 
   
-const { Client, GatewayIntentBits } = require('discord.js');
-const client = new Client({ intents: [ 
-  GatewayIntentBits.DirectMessages,
-  GatewayIntentBits.Guilds,
-  GatewayIntentBits.GuildBans,
-  GatewayIntentBits.GuildMessages,
-  GatewayIntentBits.MessageContent,] });
+// const { Client, GatewayIntentBits } = require('discord.js');
+// const client = new Client({ intents: [ 
+//   GatewayIntentBits.DirectMessages,
+//   GatewayIntentBits.Guilds,
+//   GatewayIntentBits.GuildBans,
+//   GatewayIntentBits.GuildMessages,
+//   GatewayIntentBits.MessageContent,] });
 
-client.on('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`);
-  client.user.setPresence({ activities: [{ name: 'AskMe Discord Interface' }], status: 'dnd', type: 'PLAYING'});
-});
+// client.on('ready', () => {
+//   console.log(`Logged in as ${client.user.tag}!`);
+//   client.user.setPresence({ activities: [{ name: 'AskMe Discord Interface' }], status: 'dnd', type: 'PLAYING'});
+// });
 
-const token = 'OTM1MTQxNjkxMjI3Mjc1Mjg1.G-KojV.PlOMNIIe1F2QVt84C6IH4apV0eZzPUzjdS7srg';
-
-
-client.on('messageCreate', (message) => {
-  if (message.content=== "!showallquestions") {
-    connection.query("SELECT * FROM question", (err, result, fields) => {
-      if (err) {
-        message.reply('An error occurred while trying to retrieve the questions from the database \n');
-      } else {
-        message.channel.send(`Mengambil data dari database...`)
-        let questions = result.map((row, index) =>`Question ${index+1}: ${row.question} (${row.id})`).join('\n');
-          message.channel.send(questions);
-      }
-    });
-  } else if (message.content === '!mysqlinfo') {
-    message.channel.send(`The IP of the MySQL server is ${connection.config.host} and the port is ${connection.config.port}.`);
-  } else if (message.content === '!mysqlping') {
-    connection.ping((err) => {
-      if(err) {
-        message.reply(`An error occurred while trying to ping the MySQL server: ${err}`);
-      } else {
-        message.reply('MySQL server is reachable!');
-      }
-    });
-  } else if (message.content === '!help') {
-    message.reply('Command List: \n !mysqlinfo \n!mysqlping \n!showallquestions')
-  }
-});
+// const token = 'OTM1MTQxNjkxMjI3Mjc1Mjg1.G-KojV.PlOMNIIe1F2QVt84C6IH4apV0eZzPUzjdS7srg';
 
 
+// client.on('messageCreate', (message) => {
+//   if (message.content=== "!showallquestions") {
+//     connection.query("SELECT * FROM question", (err, result, fields) => {
+//       if (err) {
+//         message.reply('An error occurred while trying to retrieve the questions from the database \n');
+//       } else {
+//         message.channel.send(`Mengambil data dari database...`)
+//         let questions = result.map((row, index) =>`Question ${index+1}: ${row.question} (${row.id})`).join('\n');
+//           message.channel.send(questions);
+//       }
+//     });
+//   } else if (message.content === '!mysqlinfo') {
+//     message.channel.send(`The IP of the MySQL server is ${connection.config.host} and the port is ${connection.config.port}.`);
+//   } else if (message.content === '!mysqlping') {
+//     connection.ping((err) => {
+//       if(err) {
+//         message.reply(`An error occurred while trying to ping the MySQL server: ${err}`);
+//       } else {
+//         message.reply('MySQL server is reachable!');
+//       }
+//     });
+//   } else if (message.content === '!help') {
+//     message.reply('Command List: \n !mysqlinfo \n!mysqlping \n!showallquestions')
+//   }
+// });
 
-client.login(token);
+
+
+// client.login(token);
