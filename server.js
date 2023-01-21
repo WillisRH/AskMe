@@ -13,8 +13,8 @@ const mysql = require('mysql');
 const { setName } = require('./pagehandler');
 
 const connection = mysql.createConnection({
-  host: '0.tcp.ap.ngrok.io',
-  port: 15200,
+  host: '127.0.0.1',
+  port: 3306,
   user: 'root',
   password: '',
   database: 'userdata',
@@ -172,16 +172,71 @@ app.get('/home/askme/success=false', (req, res) => {
     res.render("failask.ejs")
 })
 
+
+app.get("/home/askme/admin/signup", (req,res) => {
+  res.render('signuphandler.ejs')
+})
+
+app.post("/home/askme/admin/signupatt", async (req,res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+
+  try {
+    const response = await fetch('http://localhost:3000/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, password: password }),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(response.statusText, "\n Error");
+    } 
+    res.redirect('/home/askme/admin/')
+} catch (e) {
+    // Handle network error
+}
+})
+
+
 app.get("/home/askme/admin/login", (req, res) => {
   res.render("loginhandler.ejs")
 })
 
-app.post('/home/askme/admin/loginatt', function (req, res, next) {
+if (typeof localStorage === "undefined" || localStorage === null) {
+  var LocalStorage = require('node-localstorage').LocalStorage;
+  localStorage = new LocalStorage('./scratch');
+}
+
+app.post('/home/askme/admin/loginatt', async (req, res, next) => {
   const username = req.body.username;
   const password = req.body.password;
 
   
-  loginHandler.handleLogin(username, password, connection, res);
+    try {
+        const response = await fetch('http://localhost:3000/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: username, password: password })
+        });
+        if (response.status == "400") {
+          res.render('loginhandler.ejs', { error: 'Your password or username is incorrect. Please try again!' });
+          return console.log('The username or id is invalid! Please try again! (400)')
+        }
+        if (!response.ok) {
+            throw new Error(response.statusText, "\n Error");
+        } 
+        const json = await response.json();
+        console.log(json);
+        console.log('Success logged in with username \'' + username + "\'\nRedirecting to admin page! (200)")
+        res.redirect('/home/askme/admin');
+        
+    
+        if(json.token) localStorage.setItem('token', json.token);
+    
+    } catch (error) {
+        console.log(error);
+    }
+  // loginHandler.handleLogin(username, password, connection, res);
 });
 
 
@@ -190,9 +245,11 @@ app.post('/home/askme/admin/loginatt', function (req, res, next) {
 // })
 
 const auth = require('./loginhandler');
+const { Cookie } = require('express-session');
 
 
 app.get('/home/askme/admin', (req, res) => {
+  if (localStorage.getItem('token') == null || localStorage.getItem('token') == undefined || localStorage.getItem('token') == '') return res.redirect('/home/askme/admin/login')
   const sql = 'SELECT id, question FROM question';
   connection.query(sql, function (error, results, fields) {
     if (error) throw error;
