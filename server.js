@@ -125,6 +125,8 @@ app.post('/submit', function (req, res) {
     
   });
 
+
+
 // formElement.addEventListener('submit', function (event) {
 //   event.preventDefault();
 //   const question = document.getElementById('question').value;
@@ -138,8 +140,24 @@ app.post('/submit', function (req, res) {
 
 // Express Connection
 app.listen(process.env.PORT || port, () => {
+  
     console.log("Servernya nyala. Port -> " + port)
 });
+
+async function checkAuthServer() {
+  try {
+    const response = await fetch('http://localhost:3000/status');
+    if (response.status === 200) {
+      console.log('\x1b[32m' + '[AuthAPI] Authentication server is running.' + '\x1b[37m');
+    } else {
+      console.log('\x1b[31m' + '[AuthAPI] Authentication server is not running.'+ '\x1b[37m');
+    }
+  } catch (error) {
+    console.log('\x1b[31m' + '[AuthAPI] Authentication server is not running.' + '\x1b[37m');
+  }
+}
+
+checkAuthServer();
 
 app.use(express.static('public'));
 app.set('view engine', 'ejs');
@@ -197,9 +215,17 @@ app.post("/home/askme/admin/signupatt", async (req,res) => {
 }
 })
 
+function setTokenWithExpiration(expiresIn) {
+  setTimeout(() => {
+      console.log('Token has expired!');
+      // res.render('loginhandler.ejs', { error: 'Your token has expired! Please login again!' })
+      localStorage.removeItem('token');
+  }, expiresIn);
+}
 
 app.get("/home/askme/admin/login", (req, res) => {
   res.render("loginhandler.ejs")
+
 })
 
 if (typeof localStorage === "undefined" || localStorage === null) {
@@ -232,6 +258,9 @@ app.post('/home/askme/admin/loginatt', async (req, res, next) => {
         
     
         if(json.token) localStorage.setItem('token', json.token);
+
+
+      setTokenWithExpiration(120000);
     
     } catch (error) {
         console.log(error);
@@ -248,6 +277,7 @@ const auth = require('./loginhandler');
 const { Cookie } = require('express-session');
 
 
+
 app.get('/home/askme/admin', (req, res) => {
   if (localStorage.getItem('token') == null || localStorage.getItem('token') == undefined || localStorage.getItem('token') == '') return res.redirect('/home/askme/admin/login')
   const sql = 'SELECT id, question FROM question';
@@ -261,6 +291,7 @@ app.get('/home/askme/admin', (req, res) => {
 
 app.get('/home/askme/admin/questions/:id', (req, res) => {
     // Get the ID of the question from the request parameters
+    if (localStorage.getItem('token') == null || localStorage.getItem('token') == undefined || localStorage.getItem('token') == '') return res.redirect('/home/askme/admin/login')
     const id = req.params.id;
   
     const query = `SELECT * FROM question WHERE id = ${id}`
@@ -274,6 +305,7 @@ app.get('/home/askme/admin/questions/:id', (req, res) => {
   
 
   app.get('/home/askme/admin/questions/:id/delete', (req, res) => {
+    if (localStorage.getItem('token') == null || localStorage.getItem('token') == undefined || localStorage.getItem('token') == '') return res.redirect('/home/askme/admin/login')
     const questionId = req.params.id;
     const question = req.params.question;
     const query = `DELETE FROM question WHERE id = ${questionId}`;
