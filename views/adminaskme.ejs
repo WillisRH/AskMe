@@ -1,14 +1,21 @@
+<!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width">
 <h1>Pertanyaan Temen.</h1>
+<html>
 
 
+
+<% if (typeof error !== 'undefined' && error) { %>
+  <div class="error"><%= error %></div>
+<% return error; } %>
 
 <% for (let i = 0; i < questions.length; i++) { %>
     <p class="text">Question <%= i + 1 %>: <a href="/home/askme/admin/questions/<%= questions[i].id %>" style="text-decoration: none;">"<%= questions[i].question %>" (<%= questions[i].id %>)</a> <a href="/home/askme/admin/questions/<%= questions[i].id %>/delete" id="delete" class="delete">Delete</a> </p>
     <hr class="line">
   <% } %>
 
+  
 <style>
     .line {
   border: 1px solid #ddd;
@@ -38,5 +45,10 @@ h1 {
       font-size: 20px;
     }
   }
+
+  .error {
+    text-align: center;
+  }
 </style>
 
+</html>

@@ -15,7 +15,13 @@
 <html>
   <head>
     <title>Ask Me all of your question!</title>
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="error"><%= error %></div>
+    <% } %>
     <style>
+      /* * {
+        background-color: gray;
+      } */
       #container {
         text-align: center;
         border: 1px solid black;
@@ -24,10 +30,18 @@
         padding: 20px;
         border-radius: 50px;
         font-family: 'Great Vibes', cursive;
+        /* background-color: white; */
       }
       input[type="text"], input[type="submit"]{
         border-radius: 10px;
       }
+      /* h1{
+        background-color: transparent;
+      } */
+      
+      .error {
+    text-align: center;
+  }
     </style>
   </head>
   <body>

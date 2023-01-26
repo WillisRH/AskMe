@@ -1,9 +1,25 @@
 <!DOCTYPE html>
+<link rel="stylesheet" type="text/css" href="style.css"/>
+<meta name="viewport" content="width=device-width">
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+<title>Signup Panel</title>
+<link rel="icon" 
+     type="image/png" 
+     href="https://cdn.discordapp.com/attachments/785664503802232872/1055428572296257667/1671704165791.jpg">
+</link>
+<meta content="SignUp Page" property="og:title"/>
+<meta content="SignUp Panel." property="og:description"/>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 <html>
 <head>
     <title>Register</title>
+    <% if (typeof error !== 'undefined' && error) { %>
+        <div class="error"><%= error %></div>
+      <% } %>
 </head>
 <body>
+    <div id="container">
+        <h1>Signup Panel</h1>
     <form action="/home/askme/admin/signupatt" method="post">
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required>
@@ -13,5 +29,23 @@
         <br>
         <input type="submit" value="Register">
     </form>
+</div>
 </body>
+
+<style>
+    #container {
+      text-align: center;
+      border: 1px solid black;
+      width: 50%;
+      margin: 200px auto 0;
+      padding: 20px;
+      border-radius: 50px;
+    }
+    input[type="email"], input[type="submit"], input[type="password"]{
+      border-radius: 10px;
+    }
+    .error {
+text-align: center;
+}
+  </style>
 </html>
