@@ -1,81 +1,87 @@
 <!DOCTYPE html>
 <% if (typeof error !== 'undefined' && error) { %>
-  <div class="error"><%= error %></div>
+<div class="error"><%= error %></div>
 <% return error; } %>
 
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width">
-Logged in with: @<a href="/home/askme/admin/<%= token %>/profile"><%= username  %> <br> </a> <a id="copy-button" onclick="copyLink()" href="#">Copy your question link!</a>
-<h1>Your Question: "<%= title  %>"</h1>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width" />
+Logged in with: @<a href="/home/askme/admin/<%= token %>/profile"
+  ><%= username %> <br />
+</a>
+<a id="copy-button" onclick="copyLink()" href="#">Copy your question link!</a>
+<h1>Your Question: "<%= title %>"</h1>
 <html>
+  <script>
+    function copyLink() {
+      const url = window.location.href;
+      const newUrl = url.replace("/admin/", "/");
 
-<script>
-function copyLink() {
-  const url = window.location.href;
-  const newUrl = url.replace('/admin/', '/');
-  
-  const tempInput = document.createElement("input");
-  tempInput.style = "position: absolute; left: -1000px; top: -1000px";
-  tempInput.value = newUrl;
-  document.body.appendChild(tempInput);
-  tempInput.select();
-  
-  try {
-    document.execCommand("copy");
-    alert('Link copied to clipboard!');
-  } catch (error) {
-    console.error('Failed to copy link: ', error);
-  }
-  
-  document.body.removeChild(tempInput);
-}
+      const tempInput = document.createElement("input");
+      tempInput.style = "position: absolute; left: -1000px; top: -1000px";
+      tempInput.value = newUrl;
+      document.body.appendChild(tempInput);
+      tempInput.select();
 
+      try {
+        document.execCommand("copy");
+        alert("Link copied to clipboard!");
+      } catch (error) {
+        console.error("Failed to copy link: ", error);
+      }
+
+      document.body.removeChild(tempInput);
+    }
   </script>
 
-
-
-
-
-
-<% for (let i = 0; i < questions.length; i++) { %>
-    <p class="text">Question <%= i + 1 %>: <a href="/home/askme/admin/<%= id %>/questions/<%= questions[i].id %>" style="text-decoration: none;">"<%= questions[i].question %>" (<%= questions[i].id %>)</a> <a href="/home/askme/admin/<%= id %>/questions/<%= id %>/<%= questions[i].id %>/delete" id="delete" class="delete">Delete</a> </p>
-    <hr class="line">
+  <% for (let i = 0; i < questions.length; i++) { %>
+  <p class="text">
+    Question <%= i + 1 %>:
+    <a
+      href="/home/askme/admin/<%= id %>/questions/<%= questions[i].id %>"
+      style="text-decoration: none"
+      >"<%= questions[i].question %>" (<%= questions[i].id %>)</a
+    >
+    <a
+      href="/home/askme/admin/<%= id %>/questions/<%= id %>/<%= questions[i].id %>/delete"
+      id="delete"
+      class="delete"
+      >Delete</a
+    >
+  </p>
+  <hr class="line" />
   <% } %>
 
-  
-<style>
+  <style>
     .line {
-  border: 1px solid #ddd;
-}
-h1 {
-    text-align: center;
-    padding-bottom: 20px;
-
-}
-.text {
-  padding-left: 10px;
-  font-size: 20px;
-}
-* {
-    font-family: Arial, Helvetica, sans-serif;
-    /* font-size: 20px; */
-}
-
-.text .delete {
-  text-align: right;
-  margin-left: 10px;
-}
-
-@media (max-width: 768px) {
+      border: 1px solid #ddd;
+    }
+    h1 {
+      text-align: center;
+      padding-bottom: 20px;
+    }
     .text {
-      margin-top: 10px;
+      padding-left: 10px;
       font-size: 20px;
     }
-  }
+    * {
+      font-family: Arial, Helvetica, sans-serif;
+      /* font-size: 20px; */
+    }
 
-  .error {
-    text-align: center;
-  }
-</style>
+    .text .delete {
+      text-align: right;
+      margin-left: 10px;
+    }
 
+    @media (max-width: 768px) {
+      .text {
+        margin-top: 10px;
+        font-size: 20px;
+      }
+    }
+
+    .error {
+      text-align: center;
+    }
+  </style>
 </html>
