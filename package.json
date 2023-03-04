@@ -9,6 +9,8 @@
   "author": "Willis Rihatman",
   "license": "ISC",
   "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "cookies": "^0.8.0",
     "crypto": "^1.0.1",
     "discord.js": "^14.7.1",
     "discord.js-12": "^1.0.2",

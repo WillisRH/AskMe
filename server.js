@@ -5,7 +5,7 @@ port = 8971;
 
 const bodyParser = require('body-parser');
 const uuid = require('uuid');
-
+var mt = false;
 
 
 
@@ -28,36 +28,81 @@ async function checkAuthServer() {
       console.log('\x1b[32m' + '[AuthAPI] Authentication server is running.' + '\x1b[37m');
     } else {
       console.log('\x1b[31m' + '[AuthAPI] Authentication server is not running.'+ '\x1b[37m');
+      mt = true;
     }
   } catch (error) {
     console.log('\x1b[31m' + '[AuthAPI] Authentication server is not running.' + '\x1b[37m');
+    mt = true;
   }
 }
 
+
+
 checkAuthServer();
+
+
+  setInterval(checkAuthServer, 60000);
+
+
 
 app.use(express.static('public'));
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
-app.post('/submit', async (req, res) => {
+app.use(bodyParser.json());
+const Cookies = require("cookies")
+
+app.get('/home/askme/:id/success', async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const response = await fetch(`http://localhost:3000/getusernamebyquestionid/${id}`, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+  });
+
+
+  const name = await response.json();
+  console.log(name)
+  res.render("successask.ejs", {username: name})
+  } catch(err) {
+
+  }
+  
+
+})
+
+app.get('/home/askme/:id/failed', (req, res) => {
+  res.render("failask.ejs")
+})
+
+app.get('/home/askme/', (req, res) => {
+  res.redirect('/home/askme/admin/login') // sementara ke loginpage
+
+})
+
+app.post('/submit/:id', async (req, res) => {
   const question = req.body.question;
+  const questionid = req.params.id;
 
 
+  console.log(questionid)
     try {
       const response = await fetch('http://localhost:3000/submit', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ question: question })
+          body: JSON.stringify({ question: question, id: questionid })
       });
       const data = await response.json();
       if(data.error) {
           console.error(data.error);
-          res.redirect('/home/askme/success=false');
+          res.redirect(`/home/askme/${questionid}/failed`);
       } else {
           console.log(data.message);
-          res.redirect('/home/askme/success=true');
+          res.redirect(`/home/askme/${questionid}/success`);
       }
   } catch(error) {
       console.error(error);
@@ -73,6 +118,9 @@ app.get('/', (req, res) => {
 })
 
 app.get('/home', (req, res) => {
+  if(mt) {
+    return res.render('mainpage.ejs', { maintenance: 'The server is currently under maintenance!' })
+  }
     res.render('mainpage.ejs')
 }) 
 
@@ -80,18 +128,37 @@ app.get('/contact', (req, res) => {
     res.render('contact.ejs')
 })
 
-app.get('/home/askme', (req, res) => {
-    res.render("askme.ejs")
-})
+app.get('/home/askme/:id', async (req, res) => {
+  const id = req.params.id;
+  let cookies = new Cookies(req, res);
+  let token = cookies.get('token');
+  if (id.includes('admin')) {
+    if(!token){
+      return res.render('loginhandler.ejs');
+    }
+    return res.redirect(`/home/askme/admin/${token}/profile`)
+  }
 
-app.get('/home/askme/success=true', (req, res) => {
-    res.render("successask.ejs")
+  if (isNaN(id)) {
+    return res.render("askme.ejs", { title: "Invalid ID :(", id: id , error: "The id is not a number!"});;
+  }
 
-})
+  
+  try {
+    const response = await fetch(`http://localhost:3000/getquestiontitle/${id}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const title = await response.json();
+    // console.log(title.error)
+    res.render("askme.ejs", { id: id, title: title.questiontitle, error: title.error });
+  } catch(err) {
 
-app.get('/home/askme/success=false', (req, res) => {
-    res.render("failask.ejs")
-})
+    res.render("askme.ejs", { title: "Aww Snap :(", id: id , error: "Server offline please try again later!"});
+  }
+});
+
+
 
 
 app.get("/home/askme/admin/signup", (req,res) => {
@@ -100,13 +167,14 @@ app.get("/home/askme/admin/signup", (req,res) => {
 
 app.post("/home/askme/admin/signupatt", async (req,res) => {
   const email = req.body.email;
+  const username = req.body.username;
   const password = req.body.password;
 
   try {
   const response = await fetch('http://localhost:3000/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: email, password: password })
+            body: JSON.stringify({ email: email, password: password, username: username })
         });
         if (response.status == "400") {
           res.render('signuphandler.ejs', { error: 'User is already Exist!' });
@@ -132,6 +200,13 @@ function setTokenWithExpiration(expiresIn) {
 }
 
 app.get("/home/askme/admin/login", (req, res) => {
+  let cookies = new Cookies(req, res);
+  let token = cookies.get('token');
+  let email = cookies.get('email');
+
+  if (token && email != null) {
+    return res.redirect('/home/askme/admin?' + token);
+  }
   res.render("loginhandler.ejs")
 
 })
@@ -161,67 +236,262 @@ app.post('/home/askme/admin/loginatt', async (req, res, next) => {
         } 
         const json = await response.json();
         console.log(json);
+        let expires = new Date();
+expires.setSeconds(expires.getSeconds() + 120);
+        let cookies = new Cookies(req, res);
+        cookies.set('token', json.token, {expires: expires})
+        cookies.set('email', json.email, {expires: expires})
+        cookies.set('username', json.username, {expires: expires})
+        cookies.set('id', json.id, {expires: expires})
         console.log('Success logged in with username \'' + username + "\'\nRedirecting to admin page! (200)")
-        res.redirect('/home/askme/admin');
-        
-    
-        if(json.token) localStorage.setItem('token', json.token);
+        res.redirect('/home/askme/admin/' + json.token + '/profile');
+        console.log(json.token)
 
-
-      setTokenWithExpiration(12000);
+        // if(json.token) localStorage.setItem('token', json.token);
+ 
+      
+      // setTokenWithExpiration(50000);
     
     } catch (error) {
-      res.render('loginhandler.ejs', { error: 'The server is currently down/under maintenance!' });
+      res.render('loginhandler.ejs', { 
+        error: 'The server is currently down/under maintenance!', 
+        hideButton: true 
+      });
+
     }
 });
 
+// const fetchEmail = async (token) => {
+//   const response = await fetch('http://localhost:3000/profile', {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json'
+//     },
+//     body: JSON.stringify({ token })
+//   });
+
+//   const data = await response.json();
+//   if (data.hasOwnProperty('error')) {
+//     throw new Error(data.error);
+//   }
+//   return data.email;
+// };
 
 
 
-app.get('/home/askme/admin', async (req, res) => {
-  // if (localStorage.getItem('token') == null || localStorage.getItem('token') == undefined || localStorage.getItem('token') == '') return res.redirect('/home/askme/admin/login')
+// const profileData = async () => {
+//   try {
+//     const response = await fetch('http://localhost:3000/profile', {
+//       credentials: 'include'
+//     });
+//     const data = await response.json();
+//     return data;
+//   } catch (error) {
+//     console.error(error);
+//     return error;
+//   }
+// }
 
-  
+app.get('/home/askme/admin/:id', async (req, res) => {
+  let cookies = new Cookies(req, res);
+  let token = cookies.get('token');
+  let email = cookies.get('email');
+  let username = cookies.get('username');
+  if (!token){ 
+    return res.redirect('/home/askme/admin/login')
+}
+
+
+  // if (req.query.id == null && req.query.email == null &&token) {
+  //   return res.redirect(`/home/askme/admin?${token}/${email}`);
+  // }
+// try {
+//       fetchEmail(token).then((email) => {
+//   console.log(email);
+// });
+// } catch (error){
+//   console.log(error)
+// }
 
   try {
     const response = await fetch('http://localhost:3000/questionslist', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({id: req.params.id})
     });
+    const response1 = await fetch(`http://localhost:3000/getquestiontitle/${req.params.id}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const title = await response1.json();
+
     const questions = await response.json();
-    res.render('adminaskme.ejs', {questions: questions})
+
+
+    res.render('adminaskme.ejs', {questions: questions, username: username, token: token, id: req.params.id, title: title.questiontitle })
     console.log('Successfully grabbing the questions list! (200)')
-    // ...
   } catch (error) {
     res.render('adminaskme.ejs', { error: 'The server is currently down/under maintenance!' });
   }
+});
+
+
+
+app.get('/home/askme/admin/:id/profile', async (req, res) => {
+  let cookies = new Cookies(req, res);
+  let token = cookies.get('token');
+  let email = cookies.get('email');
+  let username = cookies.get('username');
+  let id = cookies.get('id');
+  if (!token){ 
+    // return res.redirect('/home/askme/admin/login')
+    return res.render('loginhandler.ejs', {error: 'Your session has been expired!'})
+}
+
+try {
+  const response = await fetch('http://localhost:3000/questionsprofilelist/' + id, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  const questions = await response.json();
+   console.log(questions)
+
+   res.render('profile.ejs', {email: email, username: username, token: token, id: id, questions: questions})
+  console.log('Successfully grabbing the questionsprofile list! (200)')
+} catch (error) {
+  // res.render('adminaskme.ejs', { error: 'The server is currently down/under maintenance!' });
+  res.redirect('/home/askme/admin/login')
+  console.log(error)
+}
+
 })
 
+app.get("/home/askme/admin/:id/profile/createquestions", async (req, res) => {
+  let cookies = new Cookies(req, res);
+  let token = cookies.get('token');
+  if (!token){ 
+    // return res.redirect('/home/askme/admin/login')
+    return res.render('loginhandler.ejs', {error: 'Your session has been expired!'})
+}
+
+  let email = cookies.get('email');
+  let username = cookies.get('username');
+  let id = cookies.get('id');
+  
+  res.render('createquestion.ejs', {token: token})
+})
+
+app.post("/home/askme/admin/:id/profile/creatingquestionsession", async (req, res) => {
+  let cookies = new Cookies(req, res);
+  let token = cookies.get('token');
+
+  if (!token){ 
+    // return res.redirect('/home/askme/admin/login')
+    return res.render('loginhandler.ejs', {error: 'Your session has been expired!'})
+  }
+
+  let email = cookies.get('email');
+  let username = cookies.get('username');
+  let id = cookies.get('id');
+  const question = req.body.question;
+
+  try {
+    const response = await fetch('http://localhost:3000/submitquestionprofilelist', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userid: id, question: question })
+    });
+    const responseText = await response.text();
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (error) {
+      console.error(`Failed to parse the response: ${error}`);
+      res.render('loginhandler.ejs', { error: 'Failed submitting the question!' });
+      return console.log('Failed submitting the question!')
+    }
+    if (response.status === 500) {
+      res.render('loginhandler.ejs', { error: 'Failed submitting the question!' });
+      return console.log('Failed submitting the question!')
+    }
+    if (!response.ok) {
+        throw new Error(response.statusText, "\n Error");
+    } 
+    res.redirect('/home/askme/admin/' + token + '/profile')
+    console.log('Successssssss')
+  } catch(error) {
+    console.error(error);
+    res.render('askme.ejs', { error: 'The server is currently down/under maintenance!' });
+  }
+});
+
+app.get("/deletecookies", async (req, res) => {
+	let cookies = new Cookies(req, res);
+	let onesec = new Date().setTime() + 1;
+  if(!cookies) {
+    return res.render('loginhandler.ejs', {error: "No cookies detected!"})
+  }
 
 
+	cookies.set("email", 0, { expires: onesec });
+	cookies.set("token", 0, { expires: onesec });
+  cookies.set("username", 0, { expires: onesec });
+  cookies.set("id", 0, { expires: onesec });
+  console.log('Successfully deleting the cookies!')
+	res.render('loginhandler.ejs', {error: "Successfully deleting the cookies!"})
+  
+  
 
-app.get('/home/askme/admin/questions/:id', async (req, res) => {
+});
+
+app.get('/home/askme/admin/:qid/questions/:id', async (req, res) => {
     // Get the ID of the question from the request parameters
-    // if (localStorage.getItem('token') == null || localStorage.getItem('token') == undefined || localStorage.getItem('token') == '') return res.redirect('/home/askme/admin/login')
+    if (localStorage.getItem('token') == null || localStorage.getItem('token') == undefined || localStorage.getItem('token') == '') return res.redirect('/home/askme/admin/login')
     const id = req.params.id;
+    const qid = req.params.qid;
   try {
     const response = await fetch('http://localhost:3000/questions/' + id, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
     });
+
+    const response1 = await fetch(`http://localhost:3000/getquestiontitle/${qid}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const title = await response1.json();
+
     const data = await response.json();
-    res.render('questionsinterface.ejs', { questions: data });
+    res.render('questionsinterface.ejs', { questions: data, title: title.questiontitle });
   } catch (error) {
     console.error(error);
     res.render('adminaskme.ejs', { error: 'The server is currently down/under maintenance!' });
   }
+
+  // try {
+  //   const response = await fetch(`http://localhost:3000/getquestiontitle/${qid}`, {
+  //     method: 'POST',
+  //     headers: { 'Content-Type': 'application/json' },
+  //   });
+  //   const title = await response.json();
+  //   // console.log(title.error)
+  //   // res.render("askme.ejs", { id: id, title: title.questiontitle, error: title.error });
+  //   res.render('questionsinterface.ejs', { questions: title.questiontitle });
+  // } catch(err) {
+  //   console.log(err);
+  //   // res.render("askme.ejs", { title: "Aww Snap!", id: id , error: "Server offline please try again later!"});
+  // }
+});
   
-  });
   
 
-  app.get('/home/askme/admin/questions/:id/delete', async (req, res) => {
-    // if (localStorage.getItem('token') == null || localStorage.getItem('token') == undefined || localStorage.getItem('token') == '') return res.redirect('/home/askme/admin/login')
+  app.get('/home/askme/admin/:id1/questions/:id1/:id/delete', async (req, res) => {
+    if (localStorage.getItem('token') == null || localStorage.getItem('token') == undefined || localStorage.getItem('token') == '') return res.redirect('/home/askme/admin/login')
     const id = req.params.id;
+    const qid = req.params.id1;
 
     try {
       const response = await fetch('http://localhost:3000/questions/' + id + "/delete", {
@@ -229,9 +499,13 @@ app.get('/home/askme/admin/questions/:id', async (req, res) => {
         headers: { 'Content-Type': 'application/json' },
       });
       console.log(`Activity | Deleted (${id})`);
-        res.redirect("/home/askme/admin")
+        res.redirect(`/home/askme/admin/${qid}`)
     } catch (error) {
       console.error(error);
       res.render('adminaskme.ejs', { error: 'The server is currently down/under maintenance!' });
     }
 });
+app.get('*', (req, res) => {
+  res.redirect('/home');
+});
+// TODO Bikin Profile, Kelarin UI, Cookies, and more.

@@ -12,5 +12,9 @@
 <meta content="A simple web for all of your friends question." property="og:description"/>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 <html>
-     Hai Bg :)
+     <% if (typeof maintenance !== 'undefined') { %>
+          Server off
+        <% } else { %>
+          Hai Bg :)
+        <% } %>
 </html>

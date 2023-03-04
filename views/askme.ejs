@@ -18,6 +18,7 @@
     <% if (typeof error !== 'undefined' && error) { %>
       <div class="error"><%= error %></div>
     <% } %>
+
     <style>
       /* * {
         background-color: gray;
@@ -46,12 +47,16 @@
   </head>
   <body>
     <div id="container">
-      <h1>Ask Me all of your question!</h1>
-      <form action="/submit" id="questionform" method="post">
+      <h1><%= title %></h1>
+    <% if (error) { %>
+      <p>Reason: <%= error %></p>
+    <% } else { %>
+      <form action="/submit/<%= id %>" id="questionform" method="post">
         <label for="question">Your Question:</label>
         <input type="text" id="question" name="question" maxlength="100">
         <input type="submit" value="Submit">
       </form>
+    <% } %>
     </div>
   </body>
 </html>
