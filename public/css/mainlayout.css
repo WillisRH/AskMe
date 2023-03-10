@@ -1,0 +1,231 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	overflow: scroll;
+	background-image: url("https://cdn.discordapp.com/attachments/1038993566183194654/1083786293265305640/skinnybeautiful.png");
+	background-size: cover;
+	background-repeat: no-repeat;
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none; /* Firefox */
+}
+
+body::-webkit-scrollbar {
+	display: none;
+}
+
+/* body */
+.container {
+	text-align: center;
+	margin-top: 250px;
+	padding: 50px;
+	margin-left: auto;
+	margin-right: auto;
+	border-radius: 30px;
+	background-color: rgba(23, 23, 23, 0.455);
+	color: white;
+}
+
+/* navbar things */
+#list,
+.listbtn {
+	display: none;
+	cursor: pointer;
+}
+
+.navbar {
+	position: fixed !important;
+	width: 100%;
+	height: 90px;
+	background: rgba(23, 23, 23, 0.8);
+	top: 0;
+	z-index: 10 !important;
+	transition: all 0.5s ease;
+	-o-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+	-webkit-transition: all 0.5s ease;
+}
+
+.navlogo {
+	cursor: pointer;
+	margin-left: 90px;
+	margin-bottom: 25px;
+	float: left;
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	border-color: white;
+	border-width: 3px;
+	border-style: solid;
+	transition: all 0.5s ease;
+	-webkit-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+}
+
+.navtitle {
+	float: left;
+	margin-top: 3px;
+	margin-left: 30px;
+	color: white;
+	cursor: pointer;
+	transition: all 0.5s ease;
+	-webkit-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+}
+
+.navlogo:hover {
+	transform: rotate(360deg) scale(1.3);
+}
+
+.navbar ul {
+	float: right;
+	margin-right: 40px;
+}
+
+.navbar ul li {
+	margin: 0 20px;
+	list-style: none;
+	display: inline-block;
+	line-height: 80px;
+	transition: all 0.5s ease;
+	-webkit-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+}
+
+.navbar ul li a {
+	font-size: 26px;
+	color: white;
+	text-decoration: none;
+	padding: 12px 17px;
+	transition: all 0.5s ease;
+	-webkit-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+	border-radius: 8px;
+}
+
+.navbar ul li a:hover {
+	font-size: 28px;
+	background-color: white;
+	color: black;
+}
+
+/* footer things */
+footer {
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: rgba(23, 23, 23, 0.8);
+	height: auto;
+	width: 100%;
+	padding-top: 40px;
+	color: #000;
+	margin-top: 50vh;
+}
+
+.footer-content {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	text-align: center;
+}
+
+.footer-content h3 {
+	font-size: 1rem;
+	font-weight: 500;
+	line-height: 1rem;
+	padding-bottom: 20px;
+	color: white;
+}
+
+.footer-content h3 a {
+	font-size: 20px !important;
+	transition: all 0.5s ease;
+	-webkit-transition: all 0.5s ease-in-out;
+	-moz-transition: all 0.5s ease-in-out;
+}
+
+.footer-content h3 a:hover {
+	font-size: 25px !important;
+}
+
+/* responsive */
+@media (max-width: 952px) {
+	.navbar ul li a {
+		font-size: 25px;
+	}
+}
+
+@media (max-width: 927px) {
+	.container {
+		border-radius: 0px;
+	}
+
+	.navtitle {
+		margin-top: 10px;
+		margin-left: 20px;
+	}
+
+	.navlogo {
+		display: none;
+		margin-top: 5px;
+		margin-left: 40px;
+	}
+
+	#list:checked ~ .listbtn {
+		font-size: 45px;
+	}
+
+	.listbtn:active {
+		font-size: 45px;
+	}
+
+	.listbtn {
+		color: white;
+		font-size: 30px;
+		display: block;
+		margin-right: 30px;
+		margin-bottom: 0px;
+		transition: all 0.5s ease;
+		-webkit-transition: all 0.5s ease;
+		-moz-transition: all 0.5s ease;
+	}
+
+	.navbar {
+		height: 90px;
+	}
+
+	.navbar ul {
+		position: fixed !important;
+		z-index: 15 !important;
+		width: 100%;
+		height: 100vh;
+		background: rgba(23, 23, 23, 0.938);
+		top: 90px;
+		left: 100%;
+		transition: all 0.5s ease;
+		-webkit-transition: all 0.5s ease;
+		-moz-transition: all 0.5s ease;
+	}
+
+	.navbar ul li {
+		display: block;
+		margin: 50px 0;
+		line-height: 30px;
+	}
+
+	.navbar ul li a {
+		font-size: 20px;
+	}
+
+	#list:checked ~ ul {
+		left: 0;
+	}
+
+	footer {
+		position: relative;
+	}
+}
+/* end of navbar responsive */

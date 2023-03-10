@@ -1,0 +1,13 @@
+.pfp {
+	border-radius: 50%;
+	width: 250px;
+	height: 250px;
+	border: 3px groove white;
+	display: block;
+	margin: 0px auto;
+}
+
+.set {
+	bottom: 20px;
+	width: 0;
+}

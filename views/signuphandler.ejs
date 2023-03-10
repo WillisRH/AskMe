@@ -1,53 +1,86 @@
-<!DOCTYPE html>
-<link rel="stylesheet" type="text/css" href="style.css"/>
-<meta name="viewport" content="width=device-width">
-<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
-<title>Signup Panel</title>
-<link rel="icon" 
-     type="image/png" 
-     href="https://cdn.discordapp.com/attachments/785664503802232872/1055428572296257667/1671704165791.jpg">
-</link>
-<meta content="SignUp Page" property="og:title"/>
-<meta content="SignUp Panel." property="og:description"/>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-<html>
-<head>
-    <title>Register</title>
-    <% if (typeof error !== 'undefined' && error) { %>
-        <div class="error"><%= error %></div>
-      <% } %>
-</head>
-<body>
-    <div id="container">
-        <h1>Signup Panel</h1>
-    <form action="/home/askme/admin/signupatt" method="post">
-      <label for="username">Username:</label>
-      <input id="username" name="username" required>
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-        <br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <br>
-        <input type="submit" value="Register">
-    </form>
-</div>
-</body>
+<link rel="stylesheet" type="text/css" href="/css/signuphandler.css" />
+<script src="/js/showpw.js"></script>
 
-<style>
-    #container {
-      text-align: center;
-      border: 1px solid black;
-      width: 50%;
-      margin: 200px auto 0;
-      padding: 20px;
-      border-radius: 50px;
-    }
-    input[type="email"], input[type="submit"], input[type="password"]{
-      border-radius: 10px;
-    }
-    .error {
-text-align: center;
-}
-  </style>
-</html>
+<% if (locals.error) { %>
+<h5 class="text-danger">Error!</h5>
+<h6 class="mb-5"><%= error %></h6>
+<% } %>
+<h1>Sign Up</h1>
+<form action="/home/askme/admin/signupatt" method="post">
+  <div class="form-row">
+    <div class="col-12 mt-5">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="basic-addon1"
+            ><i class="fas fa-user"></i
+          ></span>
+        </div>
+        <input
+          name="username"
+          type="text"
+          value=""
+          class="input form-control"
+          id="username"
+          placeholder="Username"
+          aria-label="Username"
+          aria-describedby="basic-addon1"
+        />
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="basic-addon1"
+            ><i class="fas fa-envelope"></i
+          ></span>
+        </div>
+        <input
+          name="email"
+          type="email"
+          value=""
+          class="input form-control"
+          id="email"
+          placeholder="Email"
+          aria-label="Email"
+          aria-describedby="basic-addon1"
+        />
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="basic-addon1"
+            ><i class="fas fa-lock"></i
+          ></span>
+        </div>
+        <input
+          name="password"
+          type="password"
+          value=""
+          class="input form-control"
+          id="password"
+          placeholder="Password"
+          required="true"
+          aria-label="password"
+          aria-describedby="basic-addon1"
+        />
+        <div class="input-group-append">
+          <span class="input-group-text" onclick="password_show_hide();">
+            <i class="fas fa-eye" id="show_eye"></i>
+            <i class="fas fa-eye-slash d-none" id="hide_eye"></i>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-12 pt-3 text-right">
+      <p>
+        Already have an account? <a href="/home/askme/admin/login">Sign In</a>
+      </p>
+    </div>
+    <div class="col-12">
+      <button class="btn btn-dark btn-lg" type="submit" name="signin">
+        Sign Up
+      </button>
+    </div>
+  </div>
+</form>

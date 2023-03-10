@@ -1,0 +1,16 @@
+.qst {
+	border-left: 0.25px solid rgba(128, 128, 128, 0.386) !important;
+	border-right: 0.25px solid rgba(128, 128, 128, 0.386) !important;
+}
+
+.table {
+	border-radius: 10px;
+	overflow: hidden;
+}
+
+@media (max-width: 768px) {
+	.delbtn {
+		margin-bottom: 5px;
+		margin-right: 0px;
+	}
+}
