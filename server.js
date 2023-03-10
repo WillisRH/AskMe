@@ -12,26 +12,43 @@ var mt = false;
 
 // Express Connection
 app.listen(process.env.PORT || port, () => {
-    console.log("Servernya nyala. Port -> " + port)
+  console.log(`
+|--------------------------------------------------------|
+    _   ___ _  ____  __ ___ 
+   /_\ / __| |/ /  \\/   | __|
+  / _ \\\\__ \\ ' <| |\\/| | _| 
+ /_/ \\_\\___/_|\\_\\_|  |_|___| 
+                            V.1.1.1
+`);
+console.log("Servernya nyala. Port -> " + port)
     console.log('Waiting for AuthAPI hook!');
+console.log('|--------------------------------------------------------|')
 });
 
 
 
 async function checkAuthServer() {
+  const now = new Date();
+const hours = now.getHours().toString().padStart(2, '0');
+const minutes = now.getMinutes().toString().padStart(2, '0');
+const seconds = now.getSeconds().toString().padStart(2, '0');
+
+
+
   try {
     const response = await fetch('http://localhost:3000/status', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'}
     })
     if (response.status === 200) {
-      console.log('\x1b[32m' + '[AuthAPI] Authentication server is running.' + '\x1b[37m');
+      console.log('\x1b[32m' + `[${hours}:${minutes}:${seconds}] [AuthAPI] Authentication server is running.` + '\x1b[37m');
+      mt = false;
     } else {
-      console.log('\x1b[31m' + '[AuthAPI] Authentication server is not running.'+ '\x1b[37m');
+      console.log('\x1b[31m' + `[${hours}:${minutes}:${seconds}] [AuthAPI] Authentication server is not running.`+ '\x1b[37m');
       mt = true;
     }
   } catch (error) {
-    console.log('\x1b[31m' + '[AuthAPI] Authentication server is not running.' + '\x1b[37m');
+    console.log('\x1b[31m' + `[${hours}:${minutes}:${seconds}] [AuthAPI] Authentication server is not running.` + '\x1b[37m');
     mt = true;
   }
 }
@@ -41,7 +58,7 @@ async function checkAuthServer() {
 checkAuthServer();
 
 
-  setInterval(checkAuthServer, 60000);
+  setInterval(checkAuthServer, 30000);
 
 
 
@@ -64,8 +81,8 @@ app.get('/home/askme/:id/success', async (req, res) => {
 
 
   const name = await response.json();
-  console.log(name)
-  res.render("successask.ejs", {username: name})
+  
+  res.render("successask.ejs", {username: name, id: id})
   } catch(err) {
 
   }
@@ -74,7 +91,8 @@ app.get('/home/askme/:id/success', async (req, res) => {
 })
 
 app.get('/home/askme/:id/failed', (req, res) => {
-  res.render("failask.ejs")
+  const id = req.params.id;
+  res.render("failask.ejs", {id: id})
 })
 
 app.get('/home/askme/', (req, res) => {
@@ -87,7 +105,7 @@ app.post('/submit/:id', async (req, res) => {
   const questionid = req.params.id;
 
 
-  console.log(questionid)
+
     try {
       const response = await fetch('http://localhost:3000/submit', {
           method: 'POST',
@@ -98,10 +116,10 @@ app.post('/submit/:id', async (req, res) => {
       });
       const data = await response.json();
       if(data.error) {
-          console.error(data.error);
+          console.error('[URGENT] ' + data.error + `(${questionid})`);
           res.redirect(`/home/askme/${questionid}/failed`);
       } else {
-          console.log(data.message);
+          // console.log(data.message); gatau buat apa
           res.redirect(`/home/askme/${questionid}/success`);
       }
   } catch(error) {
@@ -140,7 +158,9 @@ app.get('/home/askme/:id', async (req, res) => {
   }
 
   if (isNaN(id)) {
-    return res.render("askme.ejs", { title: "Invalid ID :(", id: id , error: "The id is not a number!"});;
+    if (!mt) {
+    return res.render("askme.ejs", { title: "Invalid ID :(", id: id , error: "The id is not a number!"});
+    } 
   }
 
   
@@ -150,7 +170,11 @@ app.get('/home/askme/:id', async (req, res) => {
       headers: { 'Content-Type': 'application/json' },
     });
     const title = await response.json();
-    // console.log(title.error)
+    
+    // if(title.error) {
+    //   return res.redirect(`/home`)
+    // }
+
     res.render("askme.ejs", { id: id, title: title.questiontitle, error: title.error });
   } catch(err) {
 
@@ -178,17 +202,16 @@ app.post("/home/askme/admin/signupatt", async (req,res) => {
         });
         if (response.status == "400") {
           res.render('signuphandler.ejs', { error: 'User is already Exist!' });
-          return console.log('The Username is already Exist! Please try again! (400)')
+          return //console.log('The Username is already Exist! Please try again! (400)')
         }
         if (!response.ok) {
             throw new Error(response.statusText, "\n Error");
         } 
-        console.log('Success logged in with username \'' + email + "\'\nRedirecting to admin page! (200)")
+        // console.log('Success logged in with username \'' + email + "\'\nRedirecting to admin page! (200)")
         res.redirect('/home/askme/admin/login');
 
 } catch (e) {
   res.render('signuphandler.ejs', { error: 'The server is currently down/under maintenance!' });
-  console.log(e);
 }
 })
 
@@ -229,13 +252,12 @@ app.post('/home/askme/admin/loginatt', async (req, res, next) => {
         });
         if (response.status == "400") {
           res.render('loginhandler.ejs', { error: 'Your password or username is incorrect. Please try again!' });
-          return console.log('The username or id is invalid! Please try again! (400)')
+          return; //console.log('The username or id is invalid! Please try again! (400)')
         }
         if (!response.ok) {
             throw new Error(response.statusText, "\n Error");
         } 
         const json = await response.json();
-        console.log(json);
         let expires = new Date();
 expires.setSeconds(expires.getSeconds() + 120);
         let cookies = new Cookies(req, res);
@@ -243,9 +265,9 @@ expires.setSeconds(expires.getSeconds() + 120);
         cookies.set('email', json.email, {expires: expires})
         cookies.set('username', json.username, {expires: expires})
         cookies.set('id', json.id, {expires: expires})
-        console.log('Success logged in with username \'' + username + "\'\nRedirecting to admin page! (200)")
+        // console.log('Success logged in with username \'' + username + "\'\nRedirecting to admin page! (200)")
         res.redirect('/home/askme/admin/' + json.token + '/profile');
-        console.log(json.token)
+        // console.log(json.token)
 
         // if(json.token) localStorage.setItem('token', json.token);
  
@@ -330,7 +352,7 @@ app.get('/home/askme/admin/:id', async (req, res) => {
 
 
     res.render('adminaskme.ejs', {questions: questions, username: username, token: token, id: req.params.id, title: title.questiontitle })
-    console.log('Successfully grabbing the questions list! (200)')
+    // console.log('Successfully grabbing the questions list! (200)')
   } catch (error) {
     res.render('adminaskme.ejs', { error: 'The server is currently down/under maintenance!' });
   }
@@ -355,14 +377,25 @@ try {
     headers: { 'Content-Type': 'application/json' },
   });
   const questions = await response.json();
-   console.log(questions)
+  //  console.log(questions)
+  const response2 = await fetch('http://localhost:3000/specialuserlist', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    }
+  });
+  const responseText2 = await response2.json();
+const specialUserIds = responseText2.map(id => id.toString());
 
-   res.render('profile.ejs', {email: email, username: username, token: token, id: id, questions: questions})
-  console.log('Successfully grabbing the questionsprofile list! (200)')
+
+   res.render('profile.ejs', {email: email, username: username, token: token, id: id, questions: questions, special: specialUserIds})
+
+   
+  // console.log('Successfully grabbing the questionsprofile list! (200)')
 } catch (error) {
   // res.render('adminaskme.ejs', { error: 'The server is currently down/under maintenance!' });
   res.redirect('/home/askme/admin/login')
-  console.log(error)
+  // console.log(error)
 }
 
 })
@@ -370,16 +403,38 @@ try {
 app.get("/home/askme/admin/:id/profile/createquestions", async (req, res) => {
   let cookies = new Cookies(req, res);
   let token = cookies.get('token');
-  if (!token){ 
-    // return res.redirect('/home/askme/admin/login')
-    return res.render('loginhandler.ejs', {error: 'Your session has been expired!'})
-}
-
   let email = cookies.get('email');
   let username = cookies.get('username');
   let id = cookies.get('id');
+  if (!token){ 
+    // return res.redirect('/home/askme/admin/login')
+    return res.render('loginhandler.ejs', {error: 'Your session has been expired!'})
+  }
+  try {
+    const response = await fetch('http://localhost:3000/questionsprofilelist/' + id, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  const questions = await response.json();
+
+  const response2 = await fetch('http://localhost:3000/specialuserlist', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    }
+  });
+  const responseText2 = await response2.json();
+const specialUserIds = responseText2.map(id => id.toString());
+
+   res.render('createquestion.ejs', {token: token, questions: questions, id: id, special: specialUserIds})
+  // console.log('Successfully grabbing the questionsprofile list! (200)')
+  } catch (err) {
+    res.render('profile.ejs', { error: 'The server is currently down/under maintenance!' });
+  }
+
   
-  res.render('createquestion.ejs', {token: token})
+  
+  // res.render('createquestion.ejs', {token: token})
 })
 
 app.post("/home/askme/admin/:id/profile/creatingquestionsession", async (req, res) => {
@@ -397,6 +452,30 @@ app.post("/home/askme/admin/:id/profile/creatingquestionsession", async (req, re
   const question = req.body.question;
 
   try {
+    const response2 = await fetch('http://localhost:3000/specialuserlist', {
+  method: 'POST',
+  headers: {
+      'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ userid: id, question: question })
+});
+const responseText2 = await response2.json();
+
+const specialUserIds = responseText2.map(id => id.toString());
+
+    const response1 = await fetch('http://localhost:3000/questionsprofilelist/' + id, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  const questions = await response1.json();
+  if (questions.length > 2 && !specialUserIds.includes(id.toString())) {
+    console.log('Someone is attempting to make a new session, but it\'s limited!');
+    res.redirect('/home/askme/admin/' + token + '/profile/createquestions');
+    return;
+  }
+
+
+
     const response = await fetch('http://localhost:3000/submitquestionprofilelist', {
         method: 'POST',
         headers: {
@@ -411,24 +490,28 @@ app.post("/home/askme/admin/:id/profile/creatingquestionsession", async (req, re
     } catch (error) {
       console.error(`Failed to parse the response: ${error}`);
       res.render('loginhandler.ejs', { error: 'Failed submitting the question!' });
-      return console.log('Failed submitting the question!')
+      return //console.log('Failed submitting the question!')
     }
     if (response.status === 500) {
       res.render('loginhandler.ejs', { error: 'Failed submitting the question!' });
-      return console.log('Failed submitting the question!')
+      return //console.log('Failed submitting the question!')
     }
     if (!response.ok) {
         throw new Error(response.statusText, "\n Error");
     } 
+
+    
+
+
     res.redirect('/home/askme/admin/' + token + '/profile')
-    console.log('Successssssss')
+    // console.log('Successssssss')
   } catch(error) {
     console.error(error);
     res.render('askme.ejs', { error: 'The server is currently down/under maintenance!' });
   }
 });
 
-app.get("/deletecookies", async (req, res) => {
+app.get("/logout", async (req, res) => {
 	let cookies = new Cookies(req, res);
 	let onesec = new Date().setTime() + 1;
   if(!cookies) {
@@ -440,8 +523,8 @@ app.get("/deletecookies", async (req, res) => {
 	cookies.set("token", 0, { expires: onesec });
   cookies.set("username", 0, { expires: onesec });
   cookies.set("id", 0, { expires: onesec });
-  console.log('Successfully deleting the cookies!')
-	res.render('loginhandler.ejs', {error: "Successfully deleting the cookies!"})
+  // console.log('Successfully deleting the cookies!')
+	res.render('loginhandler.ejs', {error: "Your account has been logged out!"})
   
   
 
@@ -449,7 +532,13 @@ app.get("/deletecookies", async (req, res) => {
 
 app.get('/home/askme/admin/:qid/questions/:id', async (req, res) => {
     // Get the ID of the question from the request parameters
-    if (localStorage.getItem('token') == null || localStorage.getItem('token') == undefined || localStorage.getItem('token') == '') return res.redirect('/home/askme/admin/login')
+    let cookies = new Cookies(req, res);
+  let token = cookies.get('token');
+
+  if (!token){ 
+    // return res.redirect('/home/askme/admin/login')
+    return res.render('loginhandler.ejs', {error: 'Your session has been expired!'})
+  }
     const id = req.params.id;
     const qid = req.params.qid;
   try {
@@ -489,7 +578,13 @@ app.get('/home/askme/admin/:qid/questions/:id', async (req, res) => {
   
 
   app.get('/home/askme/admin/:id1/questions/:id1/:id/delete', async (req, res) => {
-    if (localStorage.getItem('token') == null || localStorage.getItem('token') == undefined || localStorage.getItem('token') == '') return res.redirect('/home/askme/admin/login')
+    let cookies = new Cookies(req, res);
+  let token = cookies.get('token');
+
+  if (!token){ 
+    // return res.redirect('/home/askme/admin/login')
+    return res.render('loginhandler.ejs', {error: 'Your session has been expired!'})
+  }
     const id = req.params.id;
     const qid = req.params.id1;
 
@@ -498,13 +593,38 @@ app.get('/home/askme/admin/:qid/questions/:id', async (req, res) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
-      console.log(`Activity | Deleted (${id})`);
+      // console.log(`Activity | Deleted (${id})`);
         res.redirect(`/home/askme/admin/${qid}`)
     } catch (error) {
       console.error(error);
       res.render('adminaskme.ejs', { error: 'The server is currently down/under maintenance!' });
     }
 });
+
+
+app.get('/home/askme/admin/:id/deletesession', async (req, res) => {
+  let cookies = new Cookies(req, res);
+  let token = cookies.get('token');
+
+  if (!token){ 
+    // return res.redirect('/home/askme/admin/login')
+    return res.render('loginhandler.ejs', {error: 'Your session has been expired!'})
+  }
+    const id = req.params.id;
+
+    try {
+      const response = await fetch('http://localhost:3000/session/' + id + "/delete", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      // console.log(`Activity | Deleted Session (${id})`);
+      res.redirect(`/home/askme/admin/${token}/profile`)
+    } catch (error) {
+      console.error(error);
+      res.render('adminaskme.ejs', { error: 'The server is currently down/under maintenance!' });
+    }
+}) 
+
 app.get('*', (req, res) => {
   res.redirect('/home');
 });

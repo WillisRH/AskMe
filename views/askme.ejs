@@ -3,18 +3,15 @@
 <link rel="stylesheet" type="text/css" href="style.css"/>
 <meta name="viewport" content="width=device-width">
 <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
-<title>Ask me your question!</title>
+
 <link rel="icon" 
      type="image/png" 
      href="https://cdn.discordapp.com/attachments/785664503802232872/1055428572296257667/1671704165791.jpg">
 </link>
-<meta content="Ask your question here." property="og:title"/>
-<meta content="A simple web for your question." property="og:description"/>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <html>
   <head>
-    <title>Ask Me all of your question!</title>
     <% if (typeof error !== 'undefined' && error) { %>
       <div class="error"><%= error %></div>
     <% } %>
@@ -30,7 +27,7 @@
         margin: 250px auto 0;
         padding: 20px;
         border-radius: 50px;
-        font-family: 'Great Vibes', cursive;
+        font-family: 'Times New Roman', Times, serif
         /* background-color: white; */
       }
       input[type="text"], input[type="submit"]{
@@ -39,7 +36,26 @@
       /* h1{
         background-color: transparent;
       } */
-      
+      input[type="submit"] {
+      display: block;
+      margin: 20px auto 0;
+      padding: 10px 20px;
+      font-size: 24px;
+      color: #fff;
+      background-color: grey;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    input[type="text"] {
+      display: block;
+      margin: 0 auto;
+      width: 85%;
+      padding: 1px;
+      font-size: 24px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
       .error {
     text-align: center;
   }
@@ -47,12 +63,19 @@
   </head>
   <body>
     <div id="container">
-      <h1><%= title %></h1>
+    
     <% if (error) { %>
-      <p>Reason: <%= error %></p>
+      <h1><%= error %>! </h1>
+      <title>AskMe | <%= error %></title>
+      <meta content="AskMe" property="og:title"/>
+<meta content="<%= error %>" property="og:description"/>
     <% } else { %>
+      <h1><%= title.charAt(0).toUpperCase() + title.slice(1) %></h1>
+      <title>AskMe | <%= title %></title>
+      <meta content="AskMe" property="og:title"/>
+      <meta content="<%= title %>" property="og:description"/>
       <form action="/submit/<%= id %>" id="questionform" method="post">
-        <label for="question">Your Question:</label>
+        <!-- <label for="question">Your Question:</label> -->
         <input type="text" id="question" name="question" maxlength="100">
         <input type="submit" value="Submit">
       </form>

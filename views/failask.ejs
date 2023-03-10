@@ -1,3 +1,10 @@
 <html>
-    <h1>Gagal mengirim pertanyaan mu! Coba kontak developer website ini @wls_rhtmn</h1>
+    <h1>Failed when submiting this interaction!</h1>
+<p>Please wait for 3 seconds to reload the page...</p>
+<script>
+    setTimeout(function() {
+        const id = '<%= id %>'
+      window.location.href = "/home/askme/" + id;
+    }, 3000);
+  </script>
 </html>

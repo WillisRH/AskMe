@@ -2,6 +2,23 @@
     <h1>Terimakasih sudah mengirim pertanyaan mu! :)</h1>
     <h2 id="authorname" class="authorname">~<%= username %></h2>
 </html>
+<script>
+    let countdown = 2; // countdown logic
+  
+    function updateCountdown() {
+      const countdownEl = document.getElementById('countdown');
+      countdownEl.innerHTML = countdown;
+      countdown--;
+      if (countdown < 0) {
+        clearInterval(intervalId);
+        window.location.href = "/home/";
+      }
+    }
+  
+    const intervalId = setInterval(updateCountdown, 1000);
+  </script>
+  
+  <p>Redirecting to homepage in <span id="countdown">3</span> seconds...</p>
 
 <style>
     * {

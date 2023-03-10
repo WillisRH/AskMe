@@ -1,10 +1,56 @@
 <body>
     <div id="container">
-      <h1>Make your question! Make sure its sopan!</h1>
-      <form action="/home/askme/admin/<%= token %>/profile/creatingquestionsession" method="post">
-        <label for="question">Question:</label><br>
-        <input type="text" id="question" name="question"><br>
-        <button type="submit">DONE</button>
-      </form> 
+      <% if (questions.length < 3 || special.includes(id.toString())) { %>
+        <h1>Make your question! Make your memories!</h1>
+        <form action="/home/askme/admin/<%= token %>/profile/creatingquestionsession" method="post">
+          <label for="question">Question:</label><br>
+          <input type="text" id="question" name="question"><br>
+          <button type="submit">DONE</button>
+        </form> 
+      <% } else { %>
+        <p>You have reached the maximum number of questions.</p>
+      <% } %>
     </div>
   </body>
+
+  <style>
+    #container {
+      text-align: center;
+      margin-top: 50px;
+      font-family: Arial, sans-serif;
+    }
+  
+    h1 {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+  
+    label {
+      font-size: 18px;
+      font-weight: bold;
+    }
+  
+    input[type="text"] {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+    }
+  
+    button[type="submit"] {
+      background-color: #4CAF50;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+  
+    p {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+  </style>

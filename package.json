@@ -9,6 +9,7 @@
   "author": "Willis Rihatman",
   "license": "ISC",
   "dependencies": {
+    "chalk": "^5.2.0",
     "cookie-parser": "^1.4.6",
     "cookies": "^0.8.0",
     "crypto": "^1.0.1",
