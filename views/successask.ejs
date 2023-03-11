@@ -1,32 +1,20 @@
-<html>
-    <h1>Terimakasih sudah mengirim pertanyaan mu! :)</h1>
-    <h2 id="authorname" class="authorname">~<%= username %></h2>
-</html>
+<h1>Terimakasih sudah mengirim pertanyaan mu! :)</h1>
+<h2 id="authorname" class="authorname">~<%= username %></h2>
+
 <script>
-    let countdown = 2; // countdown logic
-  
-    function updateCountdown() {
-      const countdownEl = document.getElementById('countdown');
-      countdownEl.innerHTML = countdown;
-      countdown--;
-      if (countdown < 0) {
-        clearInterval(intervalId);
-        window.location.href = "/home/";
-      }
-    }
-  
-    const intervalId = setInterval(updateCountdown, 1000);
-  </script>
-  
-  <p>Redirecting to homepage in <span id="countdown">3</span> seconds...</p>
+	let countdown = 2; // countdown logic
 
-<style>
-    * {
-        text-align: center;
-        font-size: 30px;
-    }
+	function updateCountdown() {
+		const countdownEl = document.getElementById("countdown");
+		countdownEl.innerHTML = countdown;
+		countdown--;
+		if (countdown < 0) {
+			clearInterval(intervalId);
+			window.location.href = "/home/";
+		}
+	}
 
-    h1 {
-        margin-top: 250px;
-    }
-</style>
+	const intervalId = setInterval(updateCountdown, 1000);
+</script>
+
+<p>Redirecting to homepage in <span id="countdown">3</span> seconds...</p>

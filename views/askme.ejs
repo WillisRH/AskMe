@@ -1,86 +1,31 @@
-<!--© 2022 Willis Rihatman, All rights reserved-->
-<!DOCTYPE html>
-<link rel="stylesheet" type="text/css" href="style.css"/>
-<meta name="viewport" content="width=device-width">
-<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+<% if (locals.error) { %>
+<h4 class="text-danger">Error!</h4>
+<h5 class="text-light"><%= error %></h5>
+<% } %>
 
-<link rel="icon" 
-     type="image/png" 
-     href="https://cdn.discordapp.com/attachments/785664503802232872/1055428572296257667/1671704165791.jpg">
-</link>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-
-<html>
-  <head>
-    <% if (typeof error !== 'undefined' && error) { %>
-      <div class="error"><%= error %></div>
-    <% } %>
-
-    <style>
-      /* * {
-        background-color: gray;
-      } */
-      #container {
-        text-align: center;
-        border: 1px solid black;
-        width: 50%;
-        margin: 250px auto 0;
-        padding: 20px;
-        border-radius: 50px;
-        font-family: 'Times New Roman', Times, serif
-        /* background-color: white; */
-      }
-      input[type="text"], input[type="submit"]{
-        border-radius: 10px;
-      }
-      /* h1{
-        background-color: transparent;
-      } */
-      input[type="submit"] {
-      display: block;
-      margin: 20px auto 0;
-      padding: 10px 20px;
-      font-size: 24px;
-      color: #fff;
-      background-color: grey;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    input[type="text"] {
-      display: block;
-      margin: 0 auto;
-      width: 85%;
-      padding: 1px;
-      font-size: 24px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-      .error {
-    text-align: center;
-  }
-    </style>
-  </head>
-  <body>
-    <div id="container">
-    
-    <% if (error) { %>
-      <h1><%= error %>! </h1>
-      <title>AskMe | <%= error %></title>
-      <meta content="AskMe" property="og:title"/>
-<meta content="<%= error %>" property="og:description"/>
-    <% } else { %>
-      <h1><%= title.charAt(0).toUpperCase() + title.slice(1) %></h1>
-      <title>AskMe | <%= title %></title>
-      <meta content="AskMe" property="og:title"/>
-      <meta content="<%= title %>" property="og:description"/>
-      <form action="/submit/<%= id %>" id="questionform" method="post">
-        <!-- <label for="question">Your Question:</label> -->
-        <input type="text" id="question" name="question" maxlength="100">
-        <input type="submit" value="Submit">
-      </form>
-    <% } %>
-    </div>
-  </body>
-</html>
-
+<div id="container">
+	<% if (error) { %>
+	<h1><%= error %>!</h1>
+	<title>AskMe | <%= error %></title>
+	<meta content="AskMe" property="og:title" />
+	<meta content="<%= error %>" property="og:description" />
+	<% } else { %>
+	<h1><%= title.charAt(0).toUpperCase() + title.slice(1) %></h1>
+	<title>AskMe | <%= title %></title>
+	<meta content="AskMe" property="og:title" />
+	<meta content="<%= title %>" property="og:description" />
+	<form action="/submit/<%= id %>" id="questionform" method="post">
+		<!-- <label for="question">Your Question:</label> -->
+		<label for="question" class="form-label fs-4">Write something:</label>
+		<input
+			class="form-control"
+			type="text"
+			id="question"
+			name="question"
+			maxlength="100"
+			required
+		/>
+		<button type="submit" class="btn btn-success mt-3">Submit</button>
+	</form>
+	<% } %>
+</div>

@@ -1,5 +1,9 @@
-h1 {
+.title {
 	text-align: center;
+}
+
+.title::first-letter {
+	text-transform: capitalize;
 }
 
 body {
@@ -117,14 +121,11 @@ a {
 }
 
 @media (max-width: 768px) {
-	h1 {
-		font-size: 30px;
-	}
 	.container {
 		text-align: center;
 		border: 1px solid black;
 		width: 45%;
-		margin: 130px auto 0;
+		margin: 130px auto;
 		padding: 20px;
 		border-radius: 50px;
 		background-color: black;
@@ -132,6 +133,10 @@ a {
 		font-weight: bold;
 		word-wrap: break-word;
 		color: white;
+	}
+
+	.title {
+		font-size: 17px;
 	}
 
 	.selectbtn {

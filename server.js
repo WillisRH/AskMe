@@ -110,13 +110,13 @@ app.get("/home/askme/:id/success", beforeLoad, async (req, res) => {
 
 		const name = await response.json();
 
-		res.render("successask.ejs", { username: name, id: id });
+		res.render("successask.ejs", { title: "Success!", username: name, id: id });
 	} catch (err) {}
 });
 
 app.get("/home/askme/:id/failed", beforeLoad, (req, res) => {
 	const id = req.params.id;
-	res.render("failask.ejs", { id: id });
+	res.render("failask.ejs", { title: "Failed", id: id });
 });
 
 app.get("/home/askme/", beforeLoad, (req, res) => {
@@ -146,6 +146,7 @@ app.post("/submit/:id", async (req, res) => {
 	} catch (error) {
 		console.error(error);
 		res.render("askme.ejs", {
+			title: "Ask Someone",
 			error: "The server is currently down/under maintenance!",
 		});
 	}
@@ -166,7 +167,9 @@ app.get("/home", beforeLoad, (req, res) => {
 	} else {
 		app.locals.loggedin = false;
 	}
-	res.render("mainpage.ejs");
+	res.render("mainpage.ejs", {
+		title: "Home Page",
+	});
 });
 
 app.get("/contact", beforeLoad, (req, res) => {
@@ -179,7 +182,10 @@ app.get("/home/askme/:id", beforeLoad, async (req, res) => {
 	let token = cookies.get("token");
 	if (id.includes("admin")) {
 		if (!token) {
-			return res.render("loginhandler.ejs");
+			return res.render("loginhandler.ejs", {
+				title: "Login Page",
+				error: "Please login first to do this",
+			});
 		}
 		return res.redirect(`/home/askme/admin/${token}/profile`);
 	}
@@ -187,7 +193,7 @@ app.get("/home/askme/:id", beforeLoad, async (req, res) => {
 	if (isNaN(id)) {
 		if (!mt) {
 			return res.render("askme.ejs", {
-				title: "Invalid ID :(",
+				title: "Ask Someone",
 				id: id,
 				error: "The id is not a number!",
 			});
@@ -215,7 +221,7 @@ app.get("/home/askme/:id", beforeLoad, async (req, res) => {
 		});
 	} catch (err) {
 		res.render("askme.ejs", {
-			title: "Aww Snap :(",
+			title: "Ask Someone",
 			id: id,
 			error: "Server offline please try again later!",
 		});
@@ -223,7 +229,9 @@ app.get("/home/askme/:id", beforeLoad, async (req, res) => {
 });
 
 app.get("/home/askme/admin/signup", beforeLoad, (req, res) => {
-	res.render("signuphandler.ejs");
+	res.render("signuphandler.ejs", {
+		title: "Sign Up",
+	});
 });
 
 app.post("/home/askme/admin/signupatt", async (req, res) => {
@@ -242,7 +250,10 @@ app.post("/home/askme/admin/signupatt", async (req, res) => {
 			}),
 		});
 		if (response.status == "400") {
-			res.render("signuphandler.ejs", { error: "User is already Exist!" });
+			res.render("signuphandler.ejs", {
+				title: "Sign Up",
+				error: "User with that username or email is already Exist!",
+			});
 			return; //console.log('The Username is already Exist! Please try again! (400)')
 		}
 		if (!response.ok) {
@@ -252,6 +263,7 @@ app.post("/home/askme/admin/signupatt", async (req, res) => {
 		res.redirect("/home/askme/admin/login");
 	} catch (e) {
 		res.render("signuphandler.ejs", {
+			title: "Sign Up",
 			error: "The server is currently down/under maintenance!",
 		});
 	}
@@ -272,7 +284,9 @@ app.get("/home/askme/admin/login", beforeLoad, (req, res) => {
 	if (token && email != null) {
 		return res.redirect("/home/askme/admin?" + token);
 	}
-	res.render("loginhandler.ejs");
+	res.render("loginhandler.ejs", {
+		title: "Login Page",
+	});
 });
 
 if (typeof localStorage === "undefined" || localStorage === null) {
@@ -292,6 +306,7 @@ app.post("/home/askme/admin/loginatt", async (req, res, next) => {
 		});
 		if (response.status == "400") {
 			res.render("loginhandler.ejs", {
+				title: "Login Page",
 				error: "Your password or email is incorrect. Please try again!",
 			});
 			return; //console.log('The username or id is invalid! Please try again! (400)')
@@ -301,7 +316,7 @@ app.post("/home/askme/admin/loginatt", async (req, res, next) => {
 		}
 		const json = await response.json();
 		let expires = new Date();
-		expires.setSeconds(expires.getSeconds() + 120);
+		expires.setSeconds(expires.getSeconds() + 3600);
 		let cookies = new Cookies(req, res);
 		cookies.set("token", json.token, { expires: expires });
 		cookies.set("email", json.email, { expires: expires });
@@ -316,6 +331,7 @@ app.post("/home/askme/admin/loginatt", async (req, res, next) => {
 		// setTokenWithExpiration(50000);
 	} catch (error) {
 		res.render("loginhandler.ejs", {
+			title: "Login Page",
 			error: "The server is currently down/under maintenance!",
 			hideButton: true,
 		});
@@ -399,6 +415,7 @@ app.get("/home/askme/admin/:id", beforeLoad, async (req, res) => {
 		// console.log('Successfully grabbing the questions list! (200)')
 	} catch (error) {
 		res.render("adminaskme.ejs", {
+			title: "View Question",
 			error: "The server is currently down/under maintenance!",
 		});
 	}
@@ -413,6 +430,7 @@ app.get("/home/askme/admin/:id/profile", beforeLoad, async (req, res) => {
 	if (!token) {
 		// return res.redirect('/home/askme/admin/login')
 		return res.render("loginhandler.ejs", {
+			title: "Login Page",
 			error: "Your session has been expired!",
 		});
 	}
@@ -437,6 +455,7 @@ app.get("/home/askme/admin/:id/profile", beforeLoad, async (req, res) => {
 		const specialUserIds = responseText2.map((id) => id.toString());
 
 		res.render("profile.ejs", {
+			title: username,
 			email: email,
 			username: username,
 			token: token,
@@ -466,6 +485,7 @@ app.get(
 		if (!token) {
 			// return res.redirect('/home/askme/admin/login')
 			return res.render("loginhandler.ejs", {
+				title: "Login Page",
 				error: "Your session has been expired!",
 			});
 		}
@@ -489,6 +509,7 @@ app.get(
 			const specialUserIds = responseText2.map((id) => id.toString());
 
 			res.render("createquestion.ejs", {
+				title: "Create Question",
 				token: token,
 				questions: questions,
 				id: id,
@@ -497,6 +518,7 @@ app.get(
 			// console.log('Successfully grabbing the questionsprofile list! (200)')
 		} catch (err) {
 			res.render("profile.ejs", {
+				title: username,
 				error: "The server is currently down/under maintenance!",
 			});
 		}
@@ -514,6 +536,7 @@ app.post(
 		if (!token) {
 			// return res.redirect('/home/askme/admin/login')
 			return res.render("loginhandler.ejs", {
+				title: "Login Page",
 				error: "Your session has been expired!",
 			});
 		}
@@ -568,12 +591,14 @@ app.post(
 			} catch (error) {
 				console.error(`Failed to parse the response: ${error}`);
 				res.render("loginhandler.ejs", {
+					title: "Login Page",
 					error: "Failed submitting the question!",
 				});
 				return; //console.log('Failed submitting the question!')
 			}
 			if (response.status === 500) {
 				res.render("loginhandler.ejs", {
+					title: "Login Page",
 					error: "Failed submitting the question!",
 				});
 				return; //console.log('Failed submitting the question!')
@@ -587,6 +612,7 @@ app.post(
 		} catch (error) {
 			console.error(error);
 			res.render("askme.ejs", {
+				title: "Ask Someone",
 				error: "The server is currently down/under maintenance!",
 			});
 		}
@@ -597,7 +623,10 @@ app.get("/logout", beforeLoad, async (req, res) => {
 	let cookies = new Cookies(req, res);
 	let onesec = new Date().setTime() + 1;
 	if (!cookies) {
-		return res.render("loginhandler.ejs", { error: "No cookies detected!" });
+		return res.render("loginhandler.ejs", {
+			title: "Login Page",
+			error: "No cookies detected!",
+		});
 	}
 
 	cookies.set("email", 0, { expires: onesec });
@@ -606,6 +635,7 @@ app.get("/logout", beforeLoad, async (req, res) => {
 	cookies.set("id", 0, { expires: onesec });
 	// console.log('Successfully deleting the cookies!')
 	res.render("loginhandler.ejs", {
+		title: "Login Page",
 		success: "Your account has been logged out!",
 	});
 });
@@ -621,6 +651,7 @@ app.get(
 		if (!token) {
 			// return res.redirect('/home/askme/admin/login')
 			return res.render("loginhandler.ejs", {
+				title: "Login Page",
 				error: "Your session has been expired!",
 			});
 		}
@@ -644,12 +675,14 @@ app.get(
 			const data = await response.json();
 			res.render("questionsinterface.ejs", {
 				layout: false,
+				thequestion: title.questiontitle,
 				questions: data,
-				title: title.questiontitle,
+				title: "Answer | " + data.question,
 			});
 		} catch (error) {
 			console.error(error);
 			res.render("adminaskme.ejs", {
+				title: "View Question",
 				error: "The server is currently down/under maintenance!",
 			});
 		}
@@ -681,6 +714,7 @@ app.get(
 		if (!token) {
 			// return res.redirect('/home/askme/admin/login')
 			return res.render("loginhandler.ejs", {
+				title: "Login Page",
 				error: "Your session has been expired!",
 			});
 		}
@@ -700,6 +734,7 @@ app.get(
 		} catch (error) {
 			console.error(error);
 			res.render("adminaskme.ejs", {
+				title: "View Question",
 				error: "The server is currently down/under maintenance!",
 			});
 		}
@@ -713,6 +748,7 @@ app.get("/home/askme/admin/:id/deletesession", beforeLoad, async (req, res) => {
 	if (!token) {
 		// return res.redirect('/home/askme/admin/login')
 		return res.render("loginhandler.ejs", {
+			title: "Login Page",
 			error: "Your session has been expired!",
 		});
 	}
@@ -731,6 +767,7 @@ app.get("/home/askme/admin/:id/deletesession", beforeLoad, async (req, res) => {
 	} catch (error) {
 		console.error(error);
 		res.render("adminaskme.ejs", {
+			title: "View Question",
 			error: "The server is currently down/under maintenance!",
 		});
 	}

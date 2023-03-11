@@ -3,7 +3,10 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+		/>
 		<meta name="og:title" content="AskMe Website" />
 		<meta
 			name="og:description"
@@ -13,7 +16,10 @@
 			name="og:image"
 			content="https://cdn.discordapp.com/attachments/785664503802232872/1055428572296257667/1671704165791.jpg"
 		/>
-		<title><%= title %></title>
+		<title>
+			<% if (locals.title) { %> <%= title %> <% } else { %> Invalid Question <%
+			} %>
+		</title>
 		<link rel="stylesheet" type="text/css" href="/css/questionsinterface.css" />
 		<link
 			rel="icon"
@@ -67,12 +73,43 @@
 		</div>
 
 		<div class="container">
-			<h1 class="title">Someone Asked...</h1>
+			<% if (locals.thequestion) { %> <% if (thequestion.length >= 12) { %>
+			<h3 class="title"><%= thequestion %></h3>
+			<% } else { %>
+			<h1 class="title"><%= thequestion %></h1>
+			<% } %>
 			<div class="question">
 				<h2 class="text"><%= questions.question %></h2>
 			</div>
+			<% } else { %>
+			<h1>This question isn't available anymore.</h1>
+			<% } %>
 		</div>
 		<script>
+			var elem = document;
+
+			document.addEventListener(
+				"keyup",
+				(e) => {
+					if (e.key === "Enter") {
+						openFullscreen();
+					}
+				},
+				false
+			);
+
+			function openFullscreen() {
+				if (elem.requestFullscreen) {
+					elem.requestFullscreen();
+				} else if (elem.webkitRequestFullscreen) {
+					/* Safari */
+					elem.webkitRequestFullscreen();
+				} else if (elem.msRequestFullscreen) {
+					/* IE11 */
+					elem.msRequestFullscreen();
+				}
+			}
+
 			function val() {
 				let value = document.getElementById("selector").value;
 				if (value == "redblue") {
