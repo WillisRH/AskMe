@@ -1,0 +1,14 @@
+<h1>Confirm Delete?</h1>
+<h2>This is irreversible.</h2>
+<button
+	class="btn btn-dark btn-lg"
+	onclick="window.location.href = '/home/askme/admin/'"
+>
+	<i class="fas fa-arrow-left"></i> Back
+</button>
+<button
+	onclick="window.location.href = '<%= locals.url %>'"
+	class="btn btn-danger btn-lg"
+>
+	<i class="fa-solid fa-trash"></i>Delete
+</button>

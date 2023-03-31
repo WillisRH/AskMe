@@ -2,34 +2,34 @@
 
 <% if (locals.loggedin == true) { %>
 <section id="home" class="home">
-  <h1>AskMe Website</h1>
-  <h4>This website is made to ask people or your friends anonymously</h4>
-  <h5 class="mb-3">
-    You're already logged in!<br />Welcome back, <%= username %>
-  </h5>
-  <button
-    class="btn btn-dark btn-lg"
-    onclick="window.location.href = '/home/askme/admin'"
-  >
-    Profile Page
-  </button>
+	<h1>AskMe Website</h1>
+	<h4>This website is made to ask people or your friends anonymously</h4>
+	<h5 class="mb-3">
+		You're already logged in!<br />Welcome back, <%= username %>
+	</h5>
+	<button
+		class="btn btn-dark btn-lg"
+		onclick="window.location.href = '/home/askme/admin'"
+	>
+		<i class="fas fa-user"></i> Profile Page
+	</button>
 </section>
 <% } else { %>
 <section id="home" class="home">
-  <h1>Welcome to AskMe Website</h1>
-  <h4>This website is made to ask people or your friends anonymously</h4>
-  <h5 class="mb-3">Register or Login to start!</h5>
-  <button
-    class="btn btn-dark btn-lg"
-    onclick="window.location.href = '/home/askme/admin/signup'"
-  >
-    Register
-  </button>
-  <button
-    class="btn btn-dark btn-lg"
-    onclick="window.location.href = '/home/askme/admin/login'"
-  >
-    Login
-  </button>
+	<h1>Welcome to AskMe Website</h1>
+	<h4>This website is made to ask people or your friends anonymously</h4>
+	<h5 class="mb-3">Register or Login to start!</h5>
+	<button
+		class="btn btn-dark btn-lg"
+		onclick="window.location.href = '/home/askme/admin/signup'"
+	>
+		Register
+	</button>
+	<button
+		class="btn btn-dark btn-lg"
+		onclick="window.location.href = '/home/askme/admin/login'"
+	>
+		Login
+	</button>
 </section>
 <% } %>

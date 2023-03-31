@@ -773,6 +773,14 @@ app.get("/home/askme/admin/:id/deletesession", beforeLoad, async (req, res) => {
 	}
 });
 
+app.get("/home/askme/admin/:id/confirmdelete", beforeLoad, async (req, res) => {
+	const { id } = req.params;
+	res.render("confirmation", {
+		title: "Confirm Delete?",
+		url: `/home/askme/admin/${id}/deletesession`,
+	});
+});
+
 app.get("*", beforeLoad, (req, res) => {
 	res.redirect("/home");
 });

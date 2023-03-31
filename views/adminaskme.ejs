@@ -3,15 +3,13 @@
 <h6 class="text-white"><%= error %></h6>
 <% return error; } %>
 <h1>Your Question</h1>
-<h2 class="badge text-bg-dark fs-5 mb-5"><%= title %></h2>
+<h2 class="badge text-bg-dark fs-5 mb-3"><%= title %></h2>
 <br />
-Logged in as: @<a
-	class="text-white"
-	href="/home/askme/admin/<%= token %>/profile"
-	><%= username %> <br />
-</a>
 <button class="btn btn-dark my-3" id="copylink" onclick="copyLink()">
-	<i class="fas fa-copy"></i> Copy your question link!
+	<i class="fa-solid fa-paper-plane"></i> Share this question!
+</button>
+<button class="btn btn-primary mx-3" onclick="redirect()">
+	<i class="fa-solid fa-copy"></i> Preview
 </button>
 <br />
 <button
@@ -22,6 +20,13 @@ Logged in as: @<a
 </button>
 
 <script>
+	function redirect() {
+		const url = window.location.href;
+		const newUrl = url.replace("/admin/", "/");
+
+		window.location.href = newUrl;
+	}
+
 	function copyLink() {
 		const url = window.location.href;
 		const newUrl = url.replace("/admin/", "/");
@@ -35,7 +40,7 @@ Logged in as: @<a
 		try {
 			document.execCommand("copy");
 			document.getElementById("copylink").innerHTML =
-				'<i class="fas fa-copy"></i> Link Copied!';
+				'<i class="fa-solid fa-paper-plane"></i> Link Copied!';
 		} catch (error) {
 			console.error("Failed to copy link: ", error);
 		}
@@ -44,7 +49,7 @@ Logged in as: @<a
 	}
 </script>
 
-<table class="table table-striped-columns table-dark">
+<table class="table table-striped-columns table-dark mx-auto">
 	<thead>
 		<tr>
 			<th scope="col">#</th>
@@ -62,13 +67,13 @@ Logged in as: @<a
 					onclick="window.location.href = '/home/askme/admin/<%= id %>/questions/<%= questions[i].id %>'"
 					class="btn btn-success"
 				>
-					Open
+					<i class="fa-solid fa-eye"></i> Open
 				</button>
 				<button
 					onclick="window.location.href = '/home/askme/admin/<%= id %>/questions/<%= id %>/<%= questions[i].id %>/delete'"
 					class="btn btn-danger"
 				>
-					Delete
+					<i class="fa-solid fa-trash"></i> Delete
 				</button>
 			</td>
 		</tr>

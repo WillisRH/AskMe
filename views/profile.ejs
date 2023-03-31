@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="/css/profile.css" />
+<link rel="stylesheet" type="text/css" href="/css/confirmo.css" />
 
 <img
 	class="pfp"
@@ -48,9 +49,11 @@
 </h4>
 
 <% if (special.includes(id.toString())) { %>
-<h4 class="badge text-bg-success fs-5 mt-3">Special User</h4>
+<h4 class="badge text-bg-success fs-5 mt-3">
+	<i class="fa-solid fa-star"></i> Special User
+</h4>
 <% } %> <% if (questions.length < 3 || special.includes(id.toString())) { %>
-<table class="table table-dark table-striped-columns rounded-5 mt-3">
+<table class="table table-dark table-striped-columns rounded-5 mt-3 mx-auto">
 	<thead>
 		<tr>
 			<th scope="col">Question ID</th>
@@ -68,16 +71,17 @@
 					onclick="window.location.href = '/home/askme/admin/<%= question.questionid %>'"
 					class="btn btn-success"
 				>
-					Open
+					<i class="fa-solid fa-eye"></i> Open
 				</button>
 				<button
-					onclick="window.location.href = '/home/askme/admin/<%= question.questionid %>/deletesession'"
+					onclick="window.location.href = '/home/askme/admin/<%= question.questionid %>/confirmdelete'"
 					class="btn btn-danger"
 				>
-					Delete
+					<i class="fa-solid fa-trash"></i> Delete
 				</button>
 			</td>
 		</tr>
+
 		<% }); %>
 	</tbody>
 </table>
@@ -85,7 +89,7 @@
 	onclick="window.location.href = '/home/askme/admin/<%= token %>/profile/createquestions'"
 	class="btn btn-primary btn-small text-decoration-none"
 >
-	+ Create your question session!
+	<i class="fa-solid fa-plus"></i> Create your question session!
 </button>
 
 <% } else { %>
@@ -104,16 +108,16 @@
 			<td><%= question.questiontitle %></td>
 			<td>
 				<button
-					onclick="window.location.href = '/home/askme/admin/<%= question.questionid %>/deletesession'"
+					onclick="window.location.href = '/home/askme/admin/<%= question.questionid %>'"
 					class="btn btn-danger"
 				>
-					Delete
+					<i class="fa-solid fa-eye"></i> Open
 				</button>
 				<button
-					onclick="window.location.href = '/home/askme/admin/<%= question.questionid %>'"
+					onclick="window.location.href = '/home/askme/admin/<%= question.questionid %>/deletesession'"
 					class="btn btn-success"
 				>
-					Open
+					<i class="fa-solid fa-trash"></i> Delete
 				</button>
 			</td>
 		</tr>
@@ -124,3 +128,4 @@
 	You already have max amount of questions.
 </h4>
 <% } %>
+<script src="/js/confirmo.js"></script>
