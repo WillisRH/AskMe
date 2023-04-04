@@ -42,14 +42,23 @@ async function checkAuthServer() {
 					"\x1b[37m"
 			);
 			mt = false;
-		} else {
+		} else if (response.status === 403) {
+			console.log(
+				"\x1b[31m" +
+					`[${hours}:${minutes}:${seconds}] [AuthAPI] Access Denied! (403)` +
+					"\x1b[37m"
+			);
+			mt = true;
+		} 
+		
+		else {
 			console.log(
 				"\x1b[31m" +
 					`[${hours}:${minutes}:${seconds}] [AuthAPI] Authentication server is not running.` +
 					"\x1b[37m"
 			);
 			mt = true;
-		}
+		} 
 	} catch (error) {
 		console.log(
 			"\x1b[31m" +
